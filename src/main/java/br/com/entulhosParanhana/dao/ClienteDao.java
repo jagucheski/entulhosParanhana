@@ -76,7 +76,7 @@ public class ClienteDao {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Cliente> findAllByCpf(Cliente ClienteFind) {
 		try {
-			Query query = entityManager.createQuery("from Cliente c where u.cpf = :cpf order by c.nome");
+			Query query = entityManager.createQuery("from Cliente c where c.cpf = :cpf order by c.nome");
 			query.setParameter("cpf", ClienteFind.getCpf());
 			return (ArrayList<Cliente>) query.getResultList();
 		} catch (Exception e) {
@@ -102,6 +102,17 @@ public class ClienteDao {
 		try {
 			Query query = entityManager.createQuery("from Cliente c where c.cpf = :cpf");
 			query.setParameter("cpf", cpf);						
+			return (Cliente) query.getSingleResult();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	public Cliente getByCnpj(String cnpj) {
+		try {
+			Query query = entityManager.createQuery("from Cliente c where c.cnpj = :cnpj");
+			query.setParameter("cnpj", cnpj);						
 			return (Cliente) query.getSingleResult();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

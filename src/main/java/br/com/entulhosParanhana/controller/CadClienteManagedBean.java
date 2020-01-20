@@ -69,25 +69,33 @@ public class CadClienteManagedBean implements Serializable {
 	}
 
 	public void salvarCliente() {
-//		if (validaCampos()) {
-//			if (validaCpf()) {
-//				saveCliente();
-//				findCliente();				
-//			}
-//		}
-//		setTabIndexCadCliente(1);
+		if (validaCampos()) {
+			if (clienteCadastro.getTipo().equals("FISICA")) {
+				if (validaCpf()) {
+					saveCliente();
+					findCliente();
+				}
+			}else if (clienteCadastro.getTipo().equals("JURIDICA")) {
+				if (validaCnpj()) {
+					saveCliente();
+					findCliente();
+				}
+			}
+		}
+		setTabIndexCadCliente(1);
 	}
 
 	public void saveCliente() {
-//		try {
-//			ClienteDao.getInstance().merge(this.clienteCadastro);
-//			Uteis.MensagemInfo("Cliente salva com sucesso!");
-//			this.clienteCadastro = new Cliente();
-//		} catch (Exception e) {
-//			System.out.println(e.toString());
-//			logger.error(e.toString(), e);
-//			Uteis.MensagemAtencao("Ops, Ocorreu um erro ao salvar a Cliente!");			
-//		}
+		try {
+			this.clienteCadastro.setNome(this.clienteCadastro.getNome().toUpperCase());
+			ClienteDao.getInstance().merge(this.clienteCadastro);
+			Uteis.MensagemInfo("Cliente salvo com sucesso!");
+			this.clienteCadastro = new Cliente();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			logger.error(e.toString(), e);
+			Uteis.MensagemAtencao("Ops, Ocorreu um erro ao salvar o Cliente!");			
+		}
 	}
 
 	public void deletarCliente() {
@@ -117,31 +125,40 @@ public class CadClienteManagedBean implements Serializable {
 		return clienteSelecionada;
 	}
 
+	
+	/**Verifica se os campos obrigatórios estão preenchidos e CPF ou CNPJ são válidos*/
 	public boolean validaCampos() {
 		boolean camposValidos = true;
 
-		if (StringUtils.isEmpty(clienteCadastro.getNome()) && StringUtils.isBlank(clienteCadastro.getNome())) {
-			Uteis.MensagemAtencao("Campo Nome é obrigatório");
+		if (clienteCadastro.getTipo().equals("null")) {
+			Uteis.MensagemAtencao("Campo Tipo Cliente é obrigatório");
 			camposValidos = false;
 		}
-
-		if (StringUtils.isNotEmpty(clienteCadastro.getCpf()) && StringUtils.isNotBlank(clienteCadastro.getCpf())) {
+		
+ 
+		if (StringUtils.isEmpty(clienteCadastro.getNome()) && StringUtils.isBlank(clienteCadastro.getNome())) {
+			Uteis.MensagemAtencao("Campo Nome/Razão Social é obrigatório");
+			camposValidos = false;
+		}
+		
+		
+		if (clienteCadastro.getTipo().equals("FISICA")) {
 			if (!ValidaCPF.isCPF(clienteCadastro.getCpf())) {
 				Uteis.MensagemAtencao("CPF inválido");
 				camposValidos = false;
 			}	
 		}
 
-		if (StringUtils.isNotEmpty(clienteCadastro.getCnpj()) && StringUtils.isNotBlank(clienteCadastro.getCnpj())) {
+		if (clienteCadastro.getTipo().equals("JURIDICA")) {
 			if (!ValidaCNPJ.isCNPJ(clienteCadastro.getCnpj())) {
 				Uteis.MensagemAtencao("CNPJ inválido");
 				camposValidos = false;
 			}	
-		}
-			
+		}			
 		return camposValidos;
 	}
 
+	/**Verifica se ja existe cliente cadastrado com o mesmo CPF**/
 	public boolean validaCpf() {
 		boolean confirm = false;
 		Cliente clienteTemp = ClienteDao.getInstance().getByCpf(this.clienteCadastro.getCpf());
@@ -153,6 +170,23 @@ public class CadClienteManagedBean implements Serializable {
 				confirm = true;
 			} else if (clienteCadastro.getId() != clienteTemp.getId()) {
 				Uteis.MensagemAtencao("Existe um Cliente cadastrado com o CPF informado");
+			}
+		}
+		return confirm;
+	}
+
+	/**Verifica se ja existe cliente cadastrado com o mesmo CPF**/
+	public boolean validaCnpj() {
+		boolean confirm = false;
+		Cliente clienteTemp = ClienteDao.getInstance().getByCnpj(this.clienteCadastro.getCnpj());
+		
+		if (clienteTemp == null) {
+			return true;
+		} else {
+			if (clienteCadastro.getId() == clienteTemp.getId()) {
+				confirm = true;
+			} else if (clienteCadastro.getId() != clienteTemp.getId()) {
+				Uteis.MensagemAtencao("Existe um Cliente cadastrado com o CNPJ informado");
 			}
 		}
 		return confirm;

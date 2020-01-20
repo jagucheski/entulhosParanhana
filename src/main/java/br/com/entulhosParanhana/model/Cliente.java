@@ -71,7 +71,10 @@ public class Cliente {
 	@Length(max = 15)
 	@Column(name = "tel_celular")
 	private String telefoneCelular;
-
+	
+	@Length(max = 15)
+	private String tipo;
+	
 	public Cliente() {
 		super();
 		this.cidade = new Cidade();
@@ -189,6 +192,14 @@ public class Cliente {
 		this.telefoneCelular = telefoneCelular;
 	}
 
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
 	public String getToDetail() {
 		String detail = "";
 		if (getId() != 0 && getId() >= 1) {
