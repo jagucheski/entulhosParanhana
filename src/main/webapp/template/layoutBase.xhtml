@@ -2,7 +2,9 @@
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <body style="background-color: #f3f3f3;">
 
@@ -17,15 +19,16 @@
 	</h:head>
 
 
-	<div id="header" style="margin-top: 20px;">
-		<ui:include src="header.xhtml" />
+	<div id="menu"
+		style="overflow:auto; position: fixed;left:0;top:8;height:100%;">
+		<ui:include src="menu.xhtml" />
 	</div>
 
-	<div id="content" style="margin-top: 10px;">
+	<div id="content" style="margin-left: 240px" >
 		<ui:insert name="content">
 		</ui:insert>
 	</div>
-
+	
 	<div id="footer"
 		style="position: fixed; bottom: 0; width: 100%; background-color: #f3f3f3; margin-bottom: 5px;">
 		<ui:include src="footer.xhtml" />

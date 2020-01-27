@@ -11,7 +11,7 @@
 	<ui:define name="content">
 
 		<p:tabView id="tbview-cadCliente" activeIndex="#{cadClienteController.tabIndexCadCliente}"
-			style="width:auto;height:auto;margin:auto;"  effect="blind">
+			style="width:auto;height:auto;margin:auto;min-height: 715px;"  effect="blind">
 			<p:tab id="tb-consultaCliente" title="Consultar Clientes" >
 				<h:form style="margin:autotext-align:center;" id="form-consulta">
 					<h:panelGrid id="panelGrid-campos-form" columns="9" cellpadding="5">
@@ -34,7 +34,7 @@
 					</h:panelGrid>
 					
 					<p:dataTable id="dataTable-clienteList" var="cliente"
-						value="#{cadClienteController.clienteList}" rows="15"
+						value="#{cadClienteController.clienteList}" rows="20"
 						paginator="true"
                  		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 						style="width:100%;" emptyMessage="Nenhum Registro Encontrado"
