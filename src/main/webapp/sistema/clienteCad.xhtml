@@ -118,7 +118,7 @@
     										<f:selectItem itemLabel="Pessoa Física" itemValue="FISICA"/>
     										<f:selectItem itemLabel="Pessoa Juridica" itemValue="JURIDICA"/>
 											
-											<f:ajax  render="panel-dados" />
+											<f:ajax  render="panelGrid-cadClienteCpfCnpj" />
 										</p:selectOneMenu>
 	       							 </h:panelGrid>	
 	       							 
@@ -129,38 +129,40 @@
 											value="#{cadClienteController.clienteCadastro.nome}"/>
 	       							 </h:panelGrid>	
 
-	       								<h:panelGrid id="panelGrid-cadClienteCpf" columns="4" cellpadding="5"
-		       							 	rendered="#{cadClienteController.clienteCadastro.tipo eq 'FISICA' }" >
-		       							 
-										 	<p:outputLabel value="CPF*:" for="inputText-clienteCadcpf" />
-									     	<p:inputText id="inputText-clienteCadcpf"
-													style="width:110px;margin-left: 48px;" maxlength="14"
-													value="#{cadClienteController.clienteCadastro.cpf}"
-													onkeydown="javascript: fMasc( this, mCPF );"/>
-				
-											 <p:outputLabel value="RG:" for="inputText-clienteCadRG" 
-													style="width:110px;margin-left: 126px;"/>
-											 <p:inputText id="inputText-clienteCadRG"
-													style="width:110px;" maxlength="14"
-													value="#{cadClienteController.clienteCadastro.rg}"
+	       							 <h:panelGrid id="panelGrid-cadClienteCpfCnpj">
+		       							 <h:panelGrid id="panelGrid-cadClienteCpf" columns="4" cellpadding="5"
+			       							 	rendered="#{cadClienteController.clienteCadastro.tipo eq 'FISICA' }" >
+			       							 
+											 	<p:outputLabel value="CPF*:" for="inputText-clienteCadcpf" />
+										     	<p:inputText id="inputText-clienteCadcpf"
+														style="width:110px;margin-left: 45px;" maxlength="14"
+														value="#{cadClienteController.clienteCadastro.cpf}"
+														onkeydown="javascript: fMasc( this, mCPF );"/>
+					
+												 <p:outputLabel value="RG:" for="inputText-clienteCadRG" 
+														style="width:110px;margin-left: 126px;"/>
+												 <p:inputText id="inputText-clienteCadRG"
+														style="width:110px;" maxlength="14"
+														value="#{cadClienteController.clienteCadastro.rg}"
+														onkeydown="javascript: fMasc( this, mNum );"/>									
+										 </h:panelGrid>
+			
+		       							 <h:panelGrid id="panelGrid-cadClienteCnpj" columns="4" cellpadding="5"
+		       							 rendered="#{cadClienteController.clienteCadastro.tipo eq 'JURIDICA' }">
+										 	<p:outputLabel value="CNPJ*:" for="inputText-clienteCadcnpj" />
+									     	<p:inputText id="inputText-clienteCadcnpj"
+													style="width:120px;margin-left: 37px;" maxlength="20"
+													value="#{cadClienteController.clienteCadastro.cnpj}"
+													onkeydown="javascript: fMasc( this, mCNPJ );"/>
+													
+											<p:outputLabel value="Insc. Estadual:" for="inputText-clienteCadInscEst" 
+													style="width:110px;margin-left: 26px;"/>
+											 <p:inputText id="inputText-clienteCadInscEst"
+													style="width:140px;" maxlength="20"
+													value="#{cadClienteController.clienteCadastro.inscricaoEstadual}"
 													onkeydown="javascript: fMasc( this, mNum );"/>									
-										</h:panelGrid>
-		
-	       							 <h:panelGrid id="panelGrid-cadClienteCnpj" columns="4" cellpadding="5"
-	       							 rendered="#{cadClienteController.clienteCadastro.tipo eq 'JURIDICA' }">
-									 	<p:outputLabel value="CNPJ*:" for="inputText-clienteCadcnpj" />
-								     	<p:inputText id="inputText-clienteCadcnpj"
-												style="width:120px;margin-left: 31px;" maxlength="20"
-												value="#{cadClienteController.clienteCadastro.cnpj}"
-												onkeydown="javascript: fMasc( this, mCNPJ );"/>
-												
-										<p:outputLabel value="Insc. Estadual:" for="inputText-clienteCadInscEst" 
-												style="width:110px;margin-left: 26px;"/>
-										 <p:inputText id="inputText-clienteCadInscEst"
-												style="width:140px;" maxlength="20"
-												value="#{cadClienteController.clienteCadastro.inscricaoEstadual}"
-												onkeydown="javascript: fMasc( this, mNum );"/>									
-									</h:panelGrid>									
+										</h:panelGrid>	
+									</h:panelGrid>								
 	     						</p:panel>
 								
 								<p:spacer />	

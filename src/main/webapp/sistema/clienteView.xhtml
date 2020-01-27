@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/layoutBase.xhtml">
+	<ui:define name="content">
+
+		<p:tabView id="tbview-viewCliente" activeIndex="#{viewClienteController.tabIndexViewCliente}"
+			style="width:auto;height:auto;margin:auto;min-height: 715px;"  effect="blind">
+			<p:tab id="tb-consultaCliente" title="Visualizar Clientes" >
+				<h:form style="margin:autotext-align:center;" id="form-consulta">
+					<h:panelGrid id="panelGrid-campos-form" columns="9" cellpadding="5">
+
+						<p:outputLabel value="Nome/Razão:" for="outputText-clienteFindNome" />
+						<p:inputText id="outputText-clienteFindNome"
+							style="width:300px;height:11px;" maxlength="70"
+							value="#{viewClienteController.clienteFind.nome}" />
+
+						<p:outputLabel value="CPF:" for="outputText-clienteFindCpf" />
+						<p:inputText id="outputText-clienteFindCpf"
+							style="width:90px;height:11px;" maxlength="14"
+							value="#{viewClienteController.clienteFind.cpf}"
+							onkeydown="javascript: fMasc( this, mCPF );" />
+
+						<p:commandButton value="Pesquisar" style="height:23px;"
+							id="commandButton-clienteCadFind" icon="ui-icon-search"
+							actionListener="#{viewClienteController.findCliente}"
+							update="dataTable-clienteList" />
+					</h:panelGrid>
+					
+					<p:dataTable id="dataTable-clienteList" var="cliente"
+						value="#{viewClienteController.clienteList}" rows="20"
+						paginator="true"
+                 		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width:100%;" emptyMessage="Nenhum Registro Encontrado"
+						resizableColumns="true" >
+
+						<f:facet name="header">
+     				       Clientes
+      				    </f:facet>
+      				    
+						<p:column headerText="Código" sortBy="#{cliente.id}" style="text-align:center;" width="5%">
+							<h:outputText value="#{cliente.id}" />
+						</p:column>
+
+						<p:column headerText="Nome/Razão" sortBy="#{cliente.nome}">
+							<h:outputText value="#{cliente.nome}" />
+						</p:column>
+					
+						<p:column headerText="Tipo Cliente" sortBy="#{cliente.tipo}" style="text-align:center;">
+							<h:outputText value="#{cliente.tipo}" />
+						</p:column>
+
+						<p:column headerText="CPF/CNPJ" sortBy="#{cliente.cpf}" style="text-align:center;">
+							<h:outputText value="#{cliente.cpf} - #{cliente.cnpj} " />
+						</p:column>
+
+						<p:column headerText="Cidade" sortBy="#{cliente.cidade.nome}" style="text-align:center;">
+							<h:outputText value="#{cliente.cidade.nome}" />
+						</p:column>
+
+						<p:column headerText="Contato" sortBy="#{cliente.telefoneCelular}" style="text-align:center;">
+							<h:outputText value="#{cliente.telefoneCelular} - #{cliente.telefoneResidencial} - #{cliente.telefoneComercial}" />
+						</p:column>						
+
+						<p:column style="text-align: center;" width="5%;" headerText="Ações" exportable="false">
+							<p:commandButton id="btnDetalharCliente"
+								style="height: 20px;width: 25px;margin:-2px;" update=":panel-dadosClienteImp"
+								title="Detalhar Cliente" icon="ui-icon-search" oncomplete="PF('dialogDetalharCliente').show();"
+								action="#{viewClienteController.detalharCliente}" process="@this">
+								<f:setPropertyActionListener value="#{cliente.id}" target="#{viewClienteController.clienteIdSelecionado}" />
+							</p:commandButton>
+						</p:column>
+						
+						<f:facet name="footer">
+      				       	 <div style="float:left;padding-top: 7px;">
+				               <h:commandLink>
+									<p:graphicImage url="/resources/imagens/xls_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para Excel" />
+				                    <p:dataExporter type="xls" target="dataTable-clienteList" encoding="ISO-8859-1" options="#{exportaDocumentoCustom.excelOpt}"  fileName="clientes" />
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+				                    <p:graphicImage url="/resources/imagens/pdf_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para PDF" />
+				                    <p:dataExporter type="pdf" target="dataTable-clienteList" fileName="clientes" encoding="ISO-8859-1"
+				                    	 preProcessor="#{exportaDocumentoCustom.preProcessPDFClientes}"  options="#{exportaDocumentoCustom.pdfOpt}"/>
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+									<p:graphicImage url="/resources/imagens/csv_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para CSV" />
+				                    <p:dataExporter type="csv" target="dataTable-clienteList" encoding="ISO-8859-1" fileName="clientes"/>
+				                </h:commandLink>		 
+			            	</div>
+			      		 </f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+		</p:tabView>
+		
+		<p:dialog header="Dados do Cliente" id="dialogDetalharCliente" widgetVar="dialogDetalharCliente" closable="true">
+			
+				<h:panelGrid id="panel-dadosClienteImp" style="width:800px;border:solid 1px; border-radius:5px;" >
+					
+					<h:panelGrid id="panelGrid-viewClienteHeader" columns="2" cellpadding="2" style="margin-left:30px;" >
+						<p:graphicImage url="/resources/imagens/logo_entulhos_paranhana.jpg" height="62px;" />
+						<h:panelGrid id="panelGrid-viewClienteScramHeader" columns="1" cellpadding="2" >
+							<p:outputLabel  value="Entulhos Paranhana - Sistema de Controle de Entradas/Saida"
+								style="color: black;font-size: 16px;"/>
+							<p:outputLabel  value="Dados do Cliente" style="color: black;font-size: 14px;"/>
+						</h:panelGrid>
+					</h:panelGrid>
+					<div style="border:solid 1px; border-radius:20px;"/>
+			
+					<h:panelGrid id="panelGrid-viewClienteCod" columns="4" cellpadding="2" >
+						<p:outputLabel value="Código:" style="font-weight: bold;" for="outputText-clienteIdImp" />
+						<p:outputLabel id="outputText-clienteIdImp"
+							value="#{viewClienteController.clienteView.id}" />
+						<p:outputLabel value="Tipo Cliente:" style="font-weight: bold;margin-left: 153px;" for="outputText-clienteClienteImp" />
+						<p:outputLabel id="outputText-clienteClienteImp" 
+						 value=" PESSOA #{viewClienteController.clienteView.tipo}" />
+    				 </h:panelGrid>	
+					
+					<h:panelGrid id="panelGrid-viewClienteNomeNasImp" columns="4" cellpadding="2" style="margin-top:-8px;">
+    					<p:outputLabel value="Nome:"  style="font-weight: bold;" for="outputText-clienteCadnomeImp" />
+						<p:outputLabel id="outputText-clienteCadnomeImp" 
+							value="#{viewClienteController.clienteView.nome}"/>						
+					</h:panelGrid>
+						
+    				<h:panelGrid id="panelGrid-viewClienteCpfImp" columns="6" cellpadding="2" style="margin-top:-8px;"
+    				 rendered="#{viewClienteController.clienteView.tipo eq 'FISICA'}">
+					 	<p:outputLabel value="CPF:"  style="font-weight: bold;"  for="outputText-clienteCadcpfImp" />
+				     	<p:outputLabel id="outputText-clienteCadcpfImp" 
+								style="width:110px;margin-left: 18px;"
+								value="#{viewClienteController.clienteView.cpf}"/>
+
+						 <p:outputLabel value="RG:"   for="outputText-clienteCadRGImp" 
+								style="width:110px;margin-left: 126px;font-weight: bold;"/>
+						 <p:outputLabel id="outputText-clienteCadRGImp" 
+								style="width:110px;" maxlength="14"
+								value="#{viewClienteController.clienteView.rg}"/>
+					</h:panelGrid>
+    		
+    				<h:panelGrid id="panelGrid-viewClienteCnpjImp" columns="6" cellpadding="2" style="margin-top:-8px;"
+    				 rendered="#{viewClienteController.clienteView.tipo eq 'JURIDICA'}">
+					 	<p:outputLabel value="CNPJ:"  style="font-weight: bold;"  for="outputText-clienteCadcnpjImp" />
+				     	<p:outputLabel id="outputText-clienteCadcnpjImp" 
+								style="width:110px;margin-left: 18px;"
+								value="#{viewClienteController.clienteView.cnpj}"/>
+
+						 <p:outputLabel value="Inscrição Estadual:"   for="outputText-clienteCadInscEstadualImp" 
+								style="width:110px;margin-left: 126px;font-weight: bold;"/>
+						 <p:outputLabel id="outputText-clienteCadInscEstadualImp" 
+								style="width:110px;" maxlength="14"
+								value="#{viewClienteController.clienteView.inscricaoEstadual}"/>
+					</h:panelGrid>
+					
+		
+					<p:panel id="pamel-endereçoImp" header="Endereço" >
+	    				<h:panelGrid id="panelGrid-enderecoImp" columns="2" cellpadding="2" >
+							<p:outputLabel value="Endereço:"  style="font-weight: bold;"  for="outputText-clienteCadEnderecoImp" />
+							<p:outputLabel id="outputText-clienteCadEnderecoImp" 
+								style="width:400px;margin-left: 10px;" maxlength="140"
+								value="#{viewClienteController.clienteView.endereco}" />
+						</h:panelGrid>	
+						
+						<h:panelGrid id="panelGrid-bairroImp" columns="2" cellpadding="2" >
+							<p:outputLabel value="Bairro:"  style="font-weight: bold;"  for="outputText-clienteCadBairroImp" />
+							<p:outputLabel id="outputText-clienteCadBairroImp" 
+								style="width:400px;margin-left: 29px;" maxlength="140"
+								value="#{viewClienteController.clienteView.bairro}" />
+						</h:panelGrid>
+						
+						<h:panelGrid id="panelGrid-cidadeImp" columns="2" cellpadding="2" >
+							<p:outputLabel value="Cidade:"  style="font-weight: bold"  for="outputText-clienteCadCidadeImp" />
+							<p:outputLabel id="outputText-clienteCadCidadeImp" 	style="margin-left: 25px;"
+								value="#{viewClienteController.clienteView.cidade.nome}"/>
+						</h:panelGrid>
+					</p:panel>
+					
+					<p:panel id="pamel-dadosBancarios" header="Observações" >
+	    				<h:panelGrid id="panelGrid-dadosBancariosImp" columns="2" cellpadding="2" >
+							<p:outputLabel value="Dados Bancários:"  style="font-weight: bold;"  
+								for="outputText-clienteCadDadosBancariosImp" />
+							<p:outputLabel id="outputText-clienteCadDadosBancariosImp" 
+								style="width:400px;margin-left: 10px;" maxlength="140"
+								value="#{viewClienteController.clienteView.dadosBancarios}" />
+						</h:panelGrid>	
+						
+						<h:panelGrid id="panelGrid-observacaoImp" columns="2" cellpadding="2" >
+							<p:outputLabel value="Observação:"  style="font-weight: bold;"  for="outputText-clienteCadObsImp" />
+							<p:inputTextarea id="outputText-clienteCadObsImp" rows="4" cols="85" 
+								maxlength="100" autoResize="false" style="height:67px;margin-left: 35px;"
+								readonly="true" disabled="true"
+								value="#{viewClienteController.clienteView.observacao}" />
+						</h:panelGrid>	
+					</p:panel>
+					
+					
+					<p:panel id="pamel-contatoImp" header="Contato" >
+						<h:panelGrid id="panelGrid-telResidencialImp" columns="2" cellpadding="2">
+							<p:outputLabel value="Tel. Residencial:"  style="font-weight: bold;" 
+								for="outputText-clienteCadTelResidencialImp"/>
+							<p:outputLabel id="outputText-clienteCadTelResidencialImp"
+								style="width:100px" maxlength="14"
+								value="#{viewClienteController.clienteView.telefoneResidencial}"/>
+	
+							<p:outputLabel value="Tel. Comercial:"  style="font-weight: bold;" 
+								for="outputText-clienteCadTelComercialImp"/>
+							<p:outputLabel id="outputText-clienteCadTelComercialImp"
+								style="width:100px" maxlength="14"
+								value="#{viewClienteController.clienteView.telefoneComercial}"/>
+	
+							<p:outputLabel value="Tel. Celular:"  style="font-weight: bold;" 
+								for="outputText-clienteCadTelCelularImp"/>
+							<p:outputLabel id="outputText-clienteCadTelCelularImp"
+								value="#{viewClienteController.clienteView.telefoneCelular}"		/>
+						</h:panelGrid>																
+					</p:panel>
+			
+				
+			</h:panelGrid>
+			<center>
+				<h:panelGrid id="pamel-buttomImp" columns="2" 	cellpadding="3">
+					<p:commandButton value="Imprimir" type="button"   icon="ui-icon-print">
+					    <p:printer target="panel-dadosClienteImp" />
+					</p:commandButton>	
+					<p:commandButton value="Fechar" type="button"   icon="ui-icon-close" onclick="PF('dialogDetalharCliente').hide();" />					
+				</h:panelGrid>
+			</center>	
+		</p:dialog>
+		
+		
+	</ui:define>
+</ui:composition>
+</html>
