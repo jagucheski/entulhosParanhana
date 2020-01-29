@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/layoutBase.xhtml">
+	<ui:define name="content">
+
+		<p:tabView id="tbview-cadProduto" activeIndex="#{cadProdutoController.tabIndexCadProduto}"
+			style="width:auto;height:auto;margin:auto;min-height: 715px;"  effect="blind">
+			<p:tab id="tb-consultaProduto" title="Consultar Produtos" >
+				<h:form style="margin:autotext-align:center;" id="form-consulta">
+					<h:panelGrid id="panelGrid-campos-form" columns="9" cellpadding="5">
+
+						<p:outputLabel value="Nome:" for="inputText-produtoFindNome" />
+						<p:inputText id="inputText-produtoFindNome"
+							style="width:200px;height:11px;" maxlength="70"
+							value="#{cadProdutoController.produtoFind.nome}" />
+
+						<p:outputLabel value="Descrição:" for="inputText-produtoFindDesc" />
+						<p:inputText id="inputText-produtoFindDesc"
+							style="width:350px;height:11px;" maxlength="70"
+							value="#{cadProdutoController.produtoFind.descricao}" />
+
+						<p:commandButton value="Pesquisar" style="height:23px;"
+							id="commandButton-produtoCadFind" icon="ui-icon-search"
+							actionListener="#{cadProdutoController.findProduto}"
+							update="dataTable-produtoList" />
+					</h:panelGrid>
+					
+					<p:dataTable id="dataTable-produtoList" var="produto"
+						value="#{cadProdutoController.produtoList}" rows="20"
+						paginator="true"
+                 		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width:100%;" emptyMessage="Nenhum Registro Encontrado"
+						resizableColumns="true" >
+
+						<f:facet name="header">
+     				       Produtos
+      				    </f:facet>
+      				    
+						<p:column headerText="Código" sortBy="#{produto.id}" style="text-align:center;" width="5%">
+							<h:outputText value="#{produto.id}" />
+						</p:column>
+
+						<p:column headerText="Nome" sortBy="#{produto.nome}" width="25%;" >
+							<h:outputText value="#{produto.nome}" />
+						</p:column>
+				
+						<p:column headerText="Cidade" sortBy="#{produto.cidade.nome}/{produto.cidade.uf}" style="text-align:center;">
+							<h:outputText value="#{produto.cidade.nome}/#{produto.cidade.uf}" />
+						</p:column> 
+
+						<p:column headerText="R$ Unitário" sortBy="#{produto.valorUnitario}" style="text-align:center;">
+							<h:outputText value="#{produto.valorUnitario}">
+								<f:convertNumber type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Unidade de Medida" sortBy="#{produto.unidadeMedida}" style="text-align:center;">
+							<h:outputText value="#{produto.unidadeMedida}"/>
+						</p:column>
+
+						<p:column headerText="Prazo - Dias" sortBy="#{produto.prazoDias}" style="text-align:center;">
+							<h:outputText value="#{produto.prazoDias}"/>
+						</p:column>
+
+						<p:column style="text-align: center;" width="5%;" headerText="Ações" exportable="false">
+							<p:commandButton id="btnEditarProduto"
+								style="height: 20px;width: 25px;margin:-2px;" update=":tbview-cadProduto"
+								title="Editar" icon="ui-icon-search"
+								action="#{cadProdutoController.detalharProduto}" >
+								<f:setPropertyActionListener value="#{produto.id}" target="#{cadProdutoController.produtoIdSelecionado}" />
+							</p:commandButton>
+						</p:column>
+					    <f:facet name="footer">
+      				       	 <div style="float:left;padding-top: 7px;">
+				               <h:commandLink>
+									<p:graphicImage url="/resources/imagens/xls_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para Excel" />
+				                    <p:dataExporter type="xls" target="dataTable-produtoList" encoding="ISO-8859-1" options="#{exportaDocumentoCustom.excelOpt}"  fileName="produtos" />
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+				                    <p:graphicImage url="/resources/imagens/pdf_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para PDF" />
+				                    <p:dataExporter type="pdf" target="dataTable-produtoList" fileName="produtos" encoding="ISO-8859-1"
+				                    	 preProcessor="#{exportaDocumentoCustom.preProcessPDF}"  options="#{exportaDocumentoCustom.pdfOpt}"/>
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+									<p:graphicImage url="/resources/imagens/csv_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para CSV" />
+				                    <p:dataExporter type="csv" target="dataTable-produtoList" encoding="ISO-8859-1" fileName="produtos"/>
+				                </h:commandLink>		 
+			            	</div>
+			      		 </f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+			<p:tab id="tab-cadProduto" title="Cadastrar Produto" style="width:auto;height:auto;">
+			    	<h:form style="margin:autotext-align:center;" id="form-cadProduto">
+						<p:messages id="messagesCadProduto" style="width:618px;" showDetail="true" autoUpdate="true" closable="true" />
+							<p:panel id="panel-dadosProduto"  style="width:610px;" header="Dados do Produto" >
+       							
+       							<p:panel id="panel-dados">
+       								<h:panelGrid id="panelGrid-cadProdutoCod" columns="2" cellpadding="5">
+										<p:outputLabel value="Código:" for="inputText-produtoId" />
+										<p:inputText id="inputText-produtoId" disabled="true"
+											style="width:60px;margin-left:28px;text-align:center;" 
+											value="#{cadProdutoController.produtoCadastro.id}" />
+									</h:panelGrid>	
+	       							 
+	       							 <h:panelGrid id="panelGrid-cadProdutoNome" columns="2" cellpadding="5">
+										<p:outputLabel value="Nome*:" for="inputText-produtoCadnome" />
+										<p:inputText id="inputText-produtoCadnome"
+											style="width:325px;margin-left:28px;text-transform: uppercase" maxlength="50"
+											value="#{cadProdutoController.produtoCadastro.nome}"/>
+	       							 </h:panelGrid>	
+
+									<h:panelGrid id="panelGrid-cadProdutoValorUnidade" columns="4" cellpadding="5">
+									 	<p:outputLabel value="R$ Unitário*:" for="inputText-produtoCadValor" />
+								     	<p:inputNumber id="inputText-produtoCadValor"
+											value="#{cadProdutoController.produtoCadastro.valorUnitario}" decimalPlaces="2"
+											decimalSeparator="," thousandSeparator="."
+											maxValue="9999999.99" size="10" immediate="true" />
+											
+										<p:outputLabel value="Unidade de Medida*:" for="inputText-produtoCadInscEst" 
+												style="width:110px;margin-left: 26px;"/>
+										<p:selectOneMenu id="inputText-produtoCadInscEst"
+											value="#{cadProdutoController.produtoCadastro.unidadeMedida}">
+											<f:selectItems value="#{unidadeMedidaListener.unidadesMedida}" />
+										</p:selectOneMenu>
+									</h:panelGrid>	
+
+									<h:panelGrid id="panelGrid-cadProdutoCidade" columns="3"
+											cellpadding="5">
+										<p:outputLabel value="Cidade*:" for="inputText-produtoCadCidade" />
+										<p:autoComplete id="inputText-produtoCadCidade"
+											style="margin-left: 22px;"
+											value="#{cadProdutoController.produtoCadastro.cidade}"
+											completeMethod="#{cadProdutoController.findCidadeAutoComplete}"
+											var="cidade" queryDelay="250" minQueryLength="3"
+											itemLabel="#{cidade.toDetail}" itemValue="#{cidade}"
+											converter="cidadeConverter" size="76">									
+										</p:autoComplete>
+										<p:commandButton id="btnFindCidade"
+											style="margin-left: -43px;" disabled="true" icon="ui-icon-search">									
+										</p:commandButton>
+									</h:panelGrid>	
+
+	       							<h:panelGrid id="panelGrid-cadProdutoPrazo" columns="2" cellpadding="5">
+										 	<p:outputLabel value="Prazo - Dias:" for="inputText-produtoCadPrazo" />
+									     	<p:inputNumber id="inputText-produtoCadPrazo" decimalPlaces="0" style="text-align: center;"
+											value="#{cadProdutoController.produtoCadastro.prazoDias}"
+											maxValue="99" size="2" immediate="true" />
+									 </h:panelGrid>
+
+	       							<h:panelGrid id="panelGrid-cadProdutoDescricao" columns="2" cellpadding="5">
+										 	<p:outputLabel value="Descrição*:" for="inputText-produtoCaddescricao" />
+									     	<p:inputTextarea  id="inputText-produtoCaddescricao" rows="4" cols="85" 
+												counter="displayCounterDesc"  													
+												maxlength="150" autoResize="false" style="height:67px;margin-left:7px;"
+												counterTemplate="{0} caracteres restantes" 
+												value="#{cadProdutoController.produtoCadastro.descricao}"/>
+									 </h:panelGrid>
+			
+									<h:panelGrid id="panelGrid-displayCounterCadDesc" style="margin-left: 120px;margin-top:-6px;">
+										<h:outputText id="displayCounterDesc" />	
+									</h:panelGrid>	
+			
+	       							 
+								</p:panel>
+								
+							<h:panelGrid id="panelGrid-cadProduto-button" columns="6"
+								cellpadding="5">
+								<p:commandButton id="commandButton-produtoCadSave"
+									value="Salvar" icon="ui-icon-check"
+									actionListener="#{cadProdutoController.salvarProduto}"
+									update="tbview-cadProduto" />
+	
+								<p:commandButton value="Excluir" id="btnDeleteProduto" 
+								   style="height: 23px;"
+								   icon="ui-icon-close"
+								   onclick="if (! confirm('Realmente quer excluir este produto?')) return false" 
+								   update="tbview-cadProduto" 
+								   actionListener="#{cadProdutoController.deletarProduto}"
+								   rendered="#{cadProdutoController.produtoCadastro.id != 0}"/>
+								
+								<p:commandButton id="commandButton-produtoCadNovoProduto" 
+									value="Novo Produto" style="height:23px;" icon="ui-icon-document"
+									actionListener="#{cadProdutoController.novoProduto}"
+									update="form-cadProduto" />
+									
+								<p:commandButton id="btnImprimirProduto" value="Imprimir"
+									style="height: 20px !important;"   update="dialogImpProduto" 
+									title="Imprimir Dados do Produto" icon="ui-icon-print" oncomplete="PF('dialogImpProduto').show();"
+									process="@this" rendered="#{cadProdutoController.produtoCadastro.id != 0}"/>
+							</h:panelGrid>
+							
+						</p:panel>										
+					</h:form>
+					<p:spacer />
+					<p:spacer />
+			</p:tab>
+		</p:tabView>
+		
+		
+<!-- 		DIALOG PARA IMPRESSAO DOS DADOS DOA CLIENTE -->
+		<p:dialog header="Imprimir - Dados do Produto" id="dialogImpProduto" widgetVar="dialogImpProduto" closable="true">
+			
+				<h:panelGrid id="panel-dadosProdutoImp" style="width:800px;border:solid 1px; border-radius:5px;" >
+					
+					<h:panelGrid id="panelGrid-cadProdutoHeader" columns="2" cellpadding="2" style="margin-left:30px;" >
+						<p:graphicImage url="/resources/imagens/logo_entulhos_paranhana.jpg" height="62px;" />
+						<h:panelGrid id="panelGrid-cadProdutoScramHeader" columns="1" cellpadding="2" >
+							<p:outputLabel  value="Entulhos Paranhana - Sistema de Controle de Entradas/Saida"
+								style="color: black;font-size: 16px;"/>
+							<p:outputLabel  value="Dados do Produto" style="color: black;font-size: 14px;"/>
+						</h:panelGrid>
+					</h:panelGrid>
+					<div style="border:solid 1px; border-radius:20px;"/>
+			
+					<h:panelGrid id="panelGrid-cadProdutoCod" columns="2" cellpadding="2" >
+						<p:outputLabel value="Código:" style="font-weight: bold;" for="outputText-produtoIdImp" />
+						<p:outputLabel id="outputText-produtoIdImp" value="#{cadProdutoController.produtoCadastro.id}" />
+    				 </h:panelGrid>	
+					
+					<h:panelGrid id="panelGrid-cadProdutoNome" columns="4" cellpadding="2" style="margin-top:-8px;">
+    					<p:outputLabel value="Nome:"  style="font-weight: bold;" for="outputText-produtoNomeImp" />
+						<p:outputLabel id="outputText-produtoNomeImp" 
+							value="#{cadProdutoController.produtoCadastro.nome}"/>						
+					</h:panelGrid>
+						
+    				<h:panelGrid id="panelGrid-cadProdutoDescImp" columns="6" cellpadding="2" style="margin-top:-8px;">
+					 	<p:outputLabel value="Descrição:"  style="font-weight: bold;"  for="outputText-produtoCadDescImp" />
+				     	<p:outputLabel id="outputText-produtoCadDescImp" 
+								style="width:110px;margin-left: 18px;"
+								value="#{cadProdutoController.produtoCadastro.descricao}"/>
+					</h:panelGrid>
+					
+					<h:panelGrid id="panelGrid-cadProdutoPrazoImp" columns="2" cellpadding="2" style="margin-top:-8px;">
+						 	<p:outputLabel value="Prazo - Dias:" for="inputText-produtoCadPrazoImp"  style="font-weight: bold;"/>
+					     	<p:outputLabel id="inputText-produtoCadPrazoImp" decimalPlaces="0" style="text-align: center;"
+								value="#{cadProdutoController.produtoCadastro.prazoDias}"/>
+					 </h:panelGrid>
+					
+				   <h:panelGrid id="panelGrid-enderecoImp" columns="4" cellpadding="2" style="margin-top:-8px;">
+							<p:outputLabel value="Valor Unitário:"  style="font-weight: bold;"  for="outputText-produtoCadValorImp" />
+							<p:outputLabel id="outputText-produtoCadValorImp" 
+								style="width:400px;margin-left: 10px;" maxlength="140"
+								value="R$ #{cadProdutoController.produtoCadastro.valorUnitario}" />
+							<p:outputLabel value="Unidade Medida:"  style="font-weight: bold;margin-left: 20px;"  for="outputText-produtoCadUnidadeImp" />
+							<p:outputLabel id="outputText-produtoCadUnidadeImp" 
+								style="width:400px;margin-left: 10px;" maxlength="140"
+								value="#{cadProdutoController.produtoCadastro.unidadeMedida}" />
+					</h:panelGrid>	
+					
+			</h:panelGrid>
+			<center>
+				<h:panelGrid id="pamel-buttomImp" columns="2" 	cellpadding="3">
+					<p:commandButton value="Imprimir" type="button"   icon="ui-icon-print">
+					    <p:printer target="panel-dadosProdutoImp" />
+					</p:commandButton>	
+					<p:commandButton value="Fechar" type="button"   icon="ui-icon-close" onclick="PF('dialogImpProduto').hide();" />					
+				</h:panelGrid>
+			</center>	
+		</p:dialog>
+		
+		
+	</ui:define>
+</ui:composition>
+</html>

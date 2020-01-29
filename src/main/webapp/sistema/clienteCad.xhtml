@@ -21,12 +21,6 @@
 							style="width:300px;height:11px;" maxlength="70"
 							value="#{cadClienteController.clienteFind.nome}" />
 
-						<p:outputLabel value="CPF:" for="inputText-clienteFindCpf" />
-						<p:inputText id="inputText-clienteFindCpf"
-							style="width:90px;height:11px;" maxlength="14"
-							value="#{cadClienteController.clienteFind.cpf}"
-							onkeydown="javascript: fMasc( this, mCPF );" />
-
 						<p:commandButton value="Pesquisar" style="height:23px;"
 							id="commandButton-clienteCadFind" icon="ui-icon-search"
 							actionListener="#{cadClienteController.findCliente}"
@@ -133,7 +127,7 @@
 		       							 <h:panelGrid id="panelGrid-cadClienteCpf" columns="4" cellpadding="5"
 			       							 	rendered="#{cadClienteController.clienteCadastro.tipo eq 'FISICA' }" >
 			       							 
-											 	<p:outputLabel value="CPF*:" for="inputText-clienteCadcpf" />
+											 	<p:outputLabel value="CPF:" for="inputText-clienteCadcpf" />
 										     	<p:inputText id="inputText-clienteCadcpf"
 														style="width:110px;margin-left: 45px;" maxlength="14"
 														value="#{cadClienteController.clienteCadastro.cpf}"
@@ -149,7 +143,7 @@
 			
 		       							 <h:panelGrid id="panelGrid-cadClienteCnpj" columns="4" cellpadding="5"
 		       							 rendered="#{cadClienteController.clienteCadastro.tipo eq 'JURIDICA' }">
-										 	<p:outputLabel value="CNPJ*:" for="inputText-clienteCadcnpj" />
+										 	<p:outputLabel value="CNPJ:" for="inputText-clienteCadcnpj" />
 									     	<p:inputText id="inputText-clienteCadcnpj"
 													style="width:120px;margin-left: 37px;" maxlength="20"
 													value="#{cadClienteController.clienteCadastro.cnpj}"

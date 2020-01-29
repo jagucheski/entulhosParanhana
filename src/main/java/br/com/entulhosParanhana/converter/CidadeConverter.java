@@ -16,7 +16,7 @@ import br.com.entulhosParanhana.uteis.Uteis;
 @FacesConverter(value="cidadeConverter")
 public class CidadeConverter implements Converter {
 
-	static final Logger logger = Logger.getLogger("br.gov.rs.parobe.scram.controller.CidadeConverter");
+	static final Logger logger = Logger.getLogger("br.com.entulhosParanhana.CidadeConverter");
 	
 	@Override
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
@@ -29,7 +29,7 @@ public class CidadeConverter implements Converter {
 			id = st.nextToken();
 			return CidadeDao.getInstance().getById(Integer.valueOf(id).intValue());
 		} catch (Exception e) {
-			Uteis.MensagemAtencao("Ops! Cidade inv√°lida.");
+			Uteis.MensagemAtencao("Ops! Cidade inv·lida.");
 			logger.error(e.toString(), e);
 			return null;
 		}
@@ -46,7 +46,7 @@ public class CidadeConverter implements Converter {
 				retorno = (new StringBuilder(String.valueOf(cidade.getId()))).append("-").append(cidade.getNome()).append("-").append(cidade.getUf()).toString();
 			}
 		} catch (Exception e) {
-			Uteis.MensagemAtencao("Ops! Cidade inv√°lida.");
+			Uteis.MensagemAtencao("Ops! Cidade inv·lida.");
 			logger.error(e.toString(), e);
 			return null;
 		}

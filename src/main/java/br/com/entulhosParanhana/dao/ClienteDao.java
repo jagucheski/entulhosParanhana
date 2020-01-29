@@ -108,6 +108,30 @@ public class ClienteDao {
 			return null;
 		}
 	}
+
+	public Cliente getByNomeCpf(Cliente clienteFind) {
+		try {
+			Query query = entityManager.createQuery("from Cliente c where upper(c.nome) like upper(:nome) and c.cpf = :cpf");
+			query.setParameter("nome", (new StringBuilder("%")).append(clienteFind.getNome()).append("%").toString());
+			query.setParameter("cpf", clienteFind.getCpf());
+			return (Cliente) query.getSingleResult();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	public Cliente getByNomeCnpj(Cliente clienteFind) {
+		try {
+			Query query = entityManager.createQuery("from Cliente c where upper(c.nome) like upper(:nome) and c.cnpj = :cnpj");
+			query.setParameter("nome", (new StringBuilder("%")).append(clienteFind.getNome()).append("%").toString());
+			query.setParameter("cnpj", clienteFind.getCnpj());
+			return (Cliente) query.getSingleResult();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
 	
 	public Cliente getByCnpj(String cnpj) {
 		try {

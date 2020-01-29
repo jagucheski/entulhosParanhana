@@ -11,6 +11,9 @@
 		<class>br.com.entulhosParanhana.model.AcessoUsuario</class>
 		<class>br.com.entulhosParanhana.model.Cidade</class>
 		<class>br.com.entulhosParanhana.model.Cliente</class>
+		<class>br.com.entulhosParanhana.model.Produto</class>
+		<class>br.com.entulhosParanhana.model.Pedido</class>
+		<class>br.com.entulhosParanhana.model.PedidoProduto</class>
 		
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />

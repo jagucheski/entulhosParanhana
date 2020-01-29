@@ -13,24 +13,27 @@
 	
 		<p:menuitem value="Home" icon="ui-icon-home" url="home.xhtml"/>
 	
-	    <p:submenu label="Administração" icon="ui-icon-gear" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_ADMINISTRATIVO' or usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}" >
-				<p:menuitem value="Usuários" icon="ui-icon-document" url="usuarioCad.xhtml" title="Cadastro de Usuários"/>
+	    <p:submenu label="Administração" icon="ui-icon-key" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}" >
+				<p:menuitem value="Usuários" icon="ui-icon-person" url="usuarioCad.xhtml" title="Cadastro de Usuários"/>
 				<p:menuitem value="Acessos ao Sistema" icon="ui-icon-document" url="acessoUsuarioView.xhtml" title="Acesso de Usuários"/>
 		</p:submenu>
 		
 		<p:submenu label="Cadastro" icon="ui-icon-document" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_ADMINISTRATIVO' or usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}">
-			<p:menuitem value="Clientes" icon="ui-icon-document" url="clienteCad.xhtml"  title="Cadastro de Clientes" />		
-			</p:submenu>
+			<p:menuitem value="Clientes" icon="ui-icon-person" url="clienteCad.xhtml"  title="Cadastro de Clientes" />		
+			<p:menuitem value="Produtos" icon="ui-icon-document" url="produtoCad.xhtml"  title="Cadastro de Produtos" />		
+			<p:menuitem value="Pedidos" icon="ui-icon-document" url="pedidoCad.xhtml"  title="Cadastro de Pedidos" />		
+		</p:submenu>
 		
 		<p:submenu label="Visualizar" icon="ui-icon-circle-zoomin" >
 			<p:menuitem value="Clientes" icon="ui-icon-circle-zoomin" url="clienteView.xhtml"  title="Visualizar Clientes" />			
+			<p:menuitem value="Produtos" icon="ui-icon-circle-zoomin" url="produtoView.xhtml"  title="Visualizar Produtos" />			
 		</p:submenu>	
 			
-		<p:submenu label="Relatórios" icon="ui-icon-clipboard" >
-			<p:menuitem value="Clientes" icon="ui-icon-clipboard" url="relatorioClientes.xhtml" title="Relatório de Clientes"/>			
+		<p:submenu label="Relatórios" icon="ui-icon-clipboard" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_ADMINISTRATIVO' or usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}">
+			<p:menuitem value="Clientes" icon="ui-icon-clipboard" url="" title="Relatório de Clientes"/>			
 		</p:submenu>
 	
-		<p:menuitem value="Sair" icon="ui-icon-extlink" title="Sair do Sistema" action="#{usuarioController.Logout}" />
+		<p:menuitem value="Sair" icon="	ui-icon-power" title="Sair do Sistema" action="#{usuarioController.Logout}" />
 			
 	</p:menu>
 	

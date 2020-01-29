@@ -16,7 +16,7 @@ public class DateConverter extends DateTimeConverter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && value.length() != getPattern().length()) {
-            throw new ConverterException("Formato inv√°lido");
+            throw new ConverterException("Formato inv·lido");
         }
 
         return super.getAsObject(context, component, value);

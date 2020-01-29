@@ -52,14 +52,10 @@ public class CadClienteManagedBean implements Serializable {
 	public void findCliente() {
 		/**TODO COLOCAR CNPJ E TELEFONE CELULAR**/
 		try {
-			if (StringUtils.isEmpty(clienteFind.getNome()) && StringUtils.isBlank(clienteFind.getCpf())) {
+			if (StringUtils.isEmpty(clienteFind.getNome())) {
 				findAllCliente();
-			} else if (StringUtils.isEmpty(clienteFind.getNome())) {
-				clienteList = (ArrayList<Cliente>) ClienteDao.getInstance().findAllByCpf(clienteFind);
-			} else if (StringUtils.isEmpty(clienteFind.getCpf())) {
-				clienteList = (ArrayList<Cliente>) ClienteDao.getInstance().findAllByNome(clienteFind);
 			} else {
-				clienteList = (ArrayList<Cliente>) ClienteDao.getInstance().findAllByNomeCpf(clienteFind);
+				clienteList = (ArrayList<Cliente>) ClienteDao.getInstance().findAllByNome(clienteFind);
 			}
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -142,18 +138,22 @@ public class CadClienteManagedBean implements Serializable {
 		}
 		
 		
-		if (clienteCadastro.getTipo().equals("FISICA")) {
-			if (!ValidaCPF.isCPF(clienteCadastro.getCpf())) {
-				Uteis.MensagemAtencao("CPF inválido");
-				camposValidos = false;
+		if (clienteCadastro.getTipo().equals("FISICA") ) {
+			if (StringUtils.isNotEmpty(clienteCadastro.getCpf()) && StringUtils.isNotBlank(clienteCadastro.getCpf())) {
+				if (!ValidaCPF.isCPF(clienteCadastro.getCpf())) {
+					Uteis.MensagemAtencao("CPF inválido");
+					camposValidos = false;
+				}
 			}	
 		}
 
-		if (clienteCadastro.getTipo().equals("JURIDICA")) {
-			if (!ValidaCNPJ.isCNPJ(clienteCadastro.getCnpj())) {
-				Uteis.MensagemAtencao("CNPJ inválido");
-				camposValidos = false;
-			}	
+		if (clienteCadastro.getTipo().equals("JURIDICA") ) {
+			if (StringUtils.isNotEmpty(clienteCadastro.getCnpj()) && StringUtils.isNotBlank(clienteCadastro.getCnpj())) {
+				if (!ValidaCNPJ.isCNPJ(clienteCadastro.getCnpj())) {
+					Uteis.MensagemAtencao("CNPJ inválido");
+					camposValidos = false;
+				}	
+			}
 		}			
 		return camposValidos;
 	}
@@ -161,7 +161,7 @@ public class CadClienteManagedBean implements Serializable {
 	/**Verifica se ja existe cliente cadastrado com o mesmo CPF**/
 	public boolean validaCpf() {
 		boolean confirm = false;
-		Cliente clienteTemp = ClienteDao.getInstance().getByCpf(this.clienteCadastro.getCpf());
+		Cliente clienteTemp = ClienteDao.getInstance().getByNomeCpf(this.clienteCadastro);
 
 		if (clienteTemp == null) {
 			return true;
@@ -169,7 +169,7 @@ public class CadClienteManagedBean implements Serializable {
 			if (clienteCadastro.getId() == clienteTemp.getId()) {
 				confirm = true;
 			} else if (clienteCadastro.getId() != clienteTemp.getId()) {
-				Uteis.MensagemAtencao("Existe um Cliente cadastrado com o CPF informado");
+				Uteis.MensagemAtencao("Existe um Cliente cadastrado com o Nome e CPF informados");
 			}
 		}
 		return confirm;
@@ -178,7 +178,7 @@ public class CadClienteManagedBean implements Serializable {
 	/**Verifica se ja existe cliente cadastrado com o mesmo CPF**/
 	public boolean validaCnpj() {
 		boolean confirm = false;
-		Cliente clienteTemp = ClienteDao.getInstance().getByCnpj(this.clienteCadastro.getCnpj());
+		Cliente clienteTemp = ClienteDao.getInstance().getByNomeCnpj(this.clienteCadastro);
 		
 		if (clienteTemp == null) {
 			return true;
