@@ -1,0 +1,412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/layoutBase.xhtml">
+	<ui:define name="content">
+
+		<p:tabView id="tbview-cadPedido" activeIndex="#{cadPedidoController.tabIndexCadPedido}"
+			style="width:auto;height:auto;margin:auto;min-height: 715px;"  effect="blind">
+			<p:tab id="tb-consultaPedido" title="Consultar Pedidos" >
+				<h:form style="margin:autotext-align:center;" id="form-consulta">
+					<h:panelGrid id="panelGrid-campos-form" columns="2" cellpadding="3">
+						<p:outputLabel value="Cliente (Nome/Razão):" for="inputText-pedidoFindCliente" />
+						<p:inputText id="inputText-pedidoFindCliente" 
+							style="width:392px;text-transform: uppercase" maxlength="100"
+							value="#{cadPedidoController.pedidoFind.cliente.nome}" />
+					</h:panelGrid>
+							
+					<h:panelGrid id="panelGrid-campos-form2" columns="5" cellpadding="3">
+						<p:outputLabel value="Data Pedido:" for="inputText-pedidoFindData" />
+						<p:calendar  id="inputText-pedidoFindData"     style="margin-left: 54px;"
+							size="11" showOn="button" navigator="true" pattern="dd/MM/yyyy" mask="true" locale="pt"
+							value="#{cadPedidoController.pedidoFind.dataPedido}" />
+							
+						<p:outputLabel value="Status Pagamento:" for="select-pedidoFindStatusPgto" style="margin-left:57px;"/>
+						<p:selectOneMenu id="select-pedidoFindStatusPgto"
+							style="width:75px"
+							value="#{cadPedidoController.pedidoFind.statusPagamento}">
+							<f:selectItem itemLabel="Aberto" itemValue="aberto" />
+							<f:selectItem itemLabel="Pago" itemValue="pago" />
+							<f:selectItem itemLabel="Em Análise" itemValue="análise" />
+						</p:selectOneMenu>
+							
+						<p:commandButton value="Pesquisar" style="height:23px;margin-left:15px;"
+							id="commandButton-pedidoCadFind" icon="ui-icon-search"
+							actionListener="#{cadPedidoController.findPedido}"
+							update="dataTable-pedidoList" />
+					</h:panelGrid>
+					
+					<p:dataTable id="dataTable-pedidoList" var="pedido"
+						value="#{cadPedidoController.pedidoFindList}" rows="20"
+						paginator="true"
+                 		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+						style="width:100%;" emptyMessage="Nenhum Registro Encontrado"
+						resizableColumns="true" >
+
+						<f:facet name="header">
+     				       Pedidos
+      				    </f:facet>
+      				    
+						<p:column headerText="Código" sortBy="#{pedido.id}" style="text-align:center;" width="5%">
+							<h:outputText value="#{pedido.id}" />
+						</p:column>
+
+						<p:column headerText="Data Pedido" sortBy="#{pedido.dataPedido}">
+							<h:outputText value="#{pedido.dataPedido}" />
+						</p:column>
+					
+						<p:column headerText="Cliente" sortBy="#{pedido.cliente.nome}" style="text-align:center;">
+							<h:outputText value="#{pedido.cliente.nome}" />
+						</p:column>
+						
+						<p:column headerText="Cidade" sortBy="#{pedido.cidade.nome}/{pedido.cidade.uf}" style="text-align:center;">
+							<h:outputText value="#{pedido.cidade.nome}/#{pedido.cidade.uf}" />
+						</p:column>
+
+						<p:column headerText="Status Pedido" sortBy="#{pedido.statusPedido}" style="text-align:center;">
+							<h:outputText value="#{pedido.statusPedido}"/>
+						</p:column>
+
+						<p:column headerText="Status Pagamento" sortBy="#{pedido.statusPagamento}" style="text-align:center;">
+							<h:outputText value="#{pedido.statusPagamento}"/>
+						</p:column>
+
+						<p:column headerText="Total Pedido" sortBy="#{pedido.valorTotal}" style="text-align:center;">
+							<h:outputText value="#{pedido.valorTotal}">
+								<f:convertNumber type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column style="text-align: center;" width="5%;" headerText="Ações" exportable="false">
+							<p:commandButton id="btnEditarPedido"
+								style="height: 20px;width: 25px;margin:-2px;" update=":tbview-cadPedido"
+								title="Editar" icon="ui-icon-search"
+								action="#{cadPedidoController.detalharPedido}" >
+								<f:setPropertyActionListener value="#{pedido.id}" target="#{cadPedidoController.pedidoIdSelecionado}" />
+							</p:commandButton>
+						</p:column>
+					    <f:facet name="footer">
+      				       	 <div style="float:left;padding-top: 7px;">
+				               <h:commandLink>
+									<p:graphicImage url="/resources/imagens/xls_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para Excel" />
+				                    <p:dataExporter type="xls" target="dataTable-pedidoList" encoding="ISO-8859-1" options="#{exportaDocumentoCustom.excelOpt}"  fileName="pedidos" />
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+				                    <p:graphicImage url="/resources/imagens/pdf_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para PDF" />
+				                    <p:dataExporter type="pdf" target="dataTable-pedidoList" fileName="pedidos" encoding="ISO-8859-1"
+				                    	 preProcessor="#{exportaDocumentoCustom.preProcessPDF}"  options="#{exportaDocumentoCustom.pdfOpt}"/>
+				                </h:commandLink>
+				 
+				                <h:commandLink>
+									<p:graphicImage url="/resources/imagens/csv_icon.jpg" style="height: 24px;width: 21px;" title="Exportar para CSV" />
+				                    <p:dataExporter type="csv" target="dataTable-pedidoList" encoding="ISO-8859-1" fileName="pedidos"/>
+				                </h:commandLink>		 
+			            	</div>
+			      		 </f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:tab>
+			<p:tab id="tab-cadPedido" title="Cadastrar Pedido" style="width:auto;height:auto;">
+			    	<h:form style="margin:autotext-align:center;" id="form-cadPedido">
+						<p:messages id="messagesCadPedido" style="width:636px;" showDetail="true" autoUpdate="true" closable="true" />
+							<p:panel id="panel-dadosPedido"  style="width:712px;" header="Dados do Pedido" >
+       							
+      								<h:panelGrid id="panelGrid-cadPedidoCod" columns="4" cellpadding="5">
+									<p:outputLabel value="Código:" for="inputText-pedidoId" />
+									<p:inputText id="inputText-pedidoId" disabled="true"
+										style="width:60px;margin-left:28px;text-align:center;" 
+										value="#{cadPedidoController.pedidoCadastro.id}" />
+									
+									<p:outputLabel value="Data Pedido:" for="inputText-pedidoCadData" style="margin-left:189px;"/>
+									<p:calendar  id="inputText-pedidoCadData" 
+										size="11" showOn="button" navigator="true" pattern="dd/MM/yyyy" mask="true" locale="pt"
+										value="#{cadPedidoController.pedidoCadastro.dataPedido}" />
+										
+								</h:panelGrid>	
+								
+								<h:panelGrid id="panelGrid-cadPedidoCodCliente" columns="3"
+										cellpadding="5">
+									<p:outputLabel value="Cliente*:" for="inputText-produtoCadCliente" />
+									<p:autoComplete id="inputText-produtoCadCliente"
+										style="margin-left: 22px;"
+										value="#{cadPedidoController.pedidoCadastro.cliente}"
+										completeMethod="#{cadPedidoController.findClienteAutoComplete}" 
+										var="cliente" queryDelay="250" minQueryLength="3"
+										itemLabel="#{cliente.toDetailPedido}" itemValue="#{cliente}"
+										converter="clienteConverter" size="88" onblur="">
+										<p:ajax event="itemSelect" listener="#{cadPedidoController.carregaDadosClienteSelecionado}" update="panel-endereco" />  
+									</p:autoComplete>
+									<p:commandButton id="btnFindCliente"
+										style="margin-left: -43px;" disabled="true" icon="ui-icon-search">									
+									</p:commandButton>
+								</h:panelGrid>	
+								
+								<p:panel id="panel-endereco" style="margin-top: 10px;" >
+									<h:panelGrid id="panelGrid-endereco" columns="2" cellpadding="5">
+										<p:outputLabel value="Endereço*:" for="inputText-pedidoCadEndereco" />
+										<p:inputText id="inputText-pedidoCadEndereco"
+											style="width:518px;margin-left: 36px;" maxlength="140"
+											value="#{cadPedidoController.pedidoCadastro.enderecoEntrega}" />
+									</h:panelGrid>	
+									
+									<h:panelGrid id="panelGrid-bairro" columns="2" cellpadding="5">
+										<p:outputLabel value="Bairro*:" for="inputText-pedidoCadBairro" />
+										<p:inputText id="inputText-pedidoCadBairro"
+											style="width:518px;margin-left: 56px;" maxlength="140"
+											value="#{cadPedidoController.pedidoCadastro.bairroEntrega}" />
+									</h:panelGrid>	
+									
+									<h:panelGrid id="panelGrid-pontoReferencia" columns="2" cellpadding="5">
+										<p:outputLabel value="Ponto Referência:" for="inputText-pedidoCadPontoReferencia" />
+										<p:inputText id="inputText-pedidoCadPontoReferencia"
+											style="width:518px;" maxlength="140"
+											value="#{cadPedidoController.pedidoCadastro.pontoReferencia}" />
+									</h:panelGrid>	
+									
+									<h:panelGrid id="panelGrid-cadPedidoCidade" columns="3"
+											cellpadding="5">
+										<p:outputLabel value="Cidade*:" for="inputText-pedidoCadCidade" />
+										<p:autoComplete id="inputText-pedidoCadCidade"
+											style="margin-left: 49px;"
+											value="#{cadPedidoController.pedidoCadastro.cidade}"
+											completeMethod="#{cadPedidoController.findCidadeAutoComplete}"
+											var="cidade" queryDelay="250" minQueryLength="3"
+											itemLabel="#{cidade.toDetail}" itemValue="#{cidade}"
+											converter="cidadeConverter" size="98" >
+										</p:autoComplete>
+										<p:commandButton id="btnFindCidade"
+											style="margin-left: -43px;" disabled="true" icon="ui-icon-search">									
+										</p:commandButton>
+									</h:panelGrid>															
+								</p:panel>
+								
+								<p:spacer />	
+								<h:panelGrid id="panelGrid-formaPagamento" columns="2" cellpadding="5">
+									<p:outputLabel value="Forma Pagamento*:" for="select-pedidoCadFormaPagamento" />
+									<p:selectOneMenu id="select-pedidoCadFormaPagamento"
+										style="width:140px"
+										value="#{cadPedidoController.pedidoCadastro.formaPagamento}">
+										<f:selectItem itemLabel="Cartão Débito" itemValue="cartao_debito" />
+										<f:selectItem itemLabel="Cartão Crédito" itemValue="cartao_credito" />
+										<f:selectItem itemLabel="Depósito Bancário" itemValue="deposito_bancario" />
+										<f:selectItem itemLabel="Espécie" itemValue="especie" />
+										<f:selectItem itemLabel="Transferência Bancária" itemValue="transferencia_bancaria" />
+										<f:selectItem itemLabel="Outro" itemValue="outro" />
+									</p:selectOneMenu>
+								</h:panelGrid>	
+								
+								<h:panelGrid id="panelGrid-observacao" columns="2" cellpadding="5">
+									<p:outputLabel value="Observação:" for="inputText-pedidoCadObservacao" />
+									<p:inputText id="inputText-pedidoCadObservacao"
+										style="width:435px;margin-left: 40px;" maxlength="100"
+										value="#{cadPedidoController.pedidoCadastro.observacao}" />
+								</h:panelGrid>	
+							</p:panel>
+								
+							<!--*****************************ITENS*****************************-->
+							<p:spacer />
+							<p:panel id="panel-Produtos"  style="width:712px;min-height: 260px;"  header="Itens">
+								<h:panelGrid id="panelGrid-ItemBtn" columns="2" cellpadding="1">
+									<p:commandButton id="btnCadItem" value="Adicionar Item ao Pedido"
+										action="#{cadPedidoController.novoItemPedido}" icon="ui-icon-plus" 
+										update="dialogCadItem" process="@this"
+										title="Adicionar Item ao Pedido" oncomplete="PF('dialogCadItem').show();"/>
+								</h:panelGrid>	
+								
+								<h:panelGrid id="panelGrid-ItemTable" columns="1" cellpadding="1">
+									<p:dataTable id="dataTable-itemPedido" var="item"
+										value="#{cadPedidoController.pedidoProdutoList}" 
+										rows="3"  paginator="true"
+	                 					paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+										style="width:100%;" emptyMessage="Nenhum Registro Encontrado"
+										resizableColumns="true" >
+								
+										<p:column headerText="Produto" sortBy="#{item.produto.nome}" style="text-align:center;" >
+											<h:outputText value="#{item.produto.nome}" />							
+										</p:column>
+
+										<p:column headerText="Entrega" sortBy="#{item.dataEntrega}" width="12%;" style="text-align:center;">
+											<h:outputText value="#{item.dataEntrega}" >
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+								
+										<p:column headerText="Retirada" sortBy="#{item.dataRetirada}" width="12%;" style="text-align:center;">
+											<h:outputText value="#{item.dataRetirada}" >
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+										
+										<p:column style="text-align: center;" width="10%;" headerText="Ações" exportable="false">
+											<p:commandButton id="btnDetalharItemPedido"
+												style="height: 20px;width: 25px;margin:-2px;" update=":form-cadEvolucao"
+												title="Editar" icon="ui-icon-search"
+												action="#{cadPedidoController.detalharProdutoPedido}" 
+												oncomplete="PF('dialogCadItem').show();" process="@this">											
+												<f:setPropertyActionListener value="#{item.id}" target="#{cadPedidoController.pedidoProdutoIdSelecionado}" />
+											</p:commandButton>
+										</p:column>
+									
+									    <f:facet name="footer">
+				      				       	 <div style="float:left;padding-top: 6px;">
+								               <h:commandLink>
+													<p:graphicImage url="/resources/imagens/xls_icon.jpg" style="height: 20px;width: 17px;" title="Exportar para Excel" />
+								                    <p:dataExporter type="xls" target="dataTable-itemPedido" encoding="ISO-8859-1" options="#{exportaDocumentoCustom.excelOpt}"  fileName="itens" />
+								                </h:commandLink>
+								 
+								                <h:commandLink>
+								                    <p:graphicImage url="/resources/imagens/pdf_icon.jpg" style="height: 20px;width: 17px;" title="Exportar para PDF" />
+								                    <p:dataExporter type="pdf" target="dataTable-itemPedido" fileName="itens" encoding="ISO-8859-1" preProcessor="#{exportaDocumentoCustom.preProcessPDF}"  options="#{exportaDocumentoCustom.pdfOpt}"/>
+								                </h:commandLink>
+								 
+								                <h:commandLink>
+													<p:graphicImage url="/resources/imagens/csv_icon.jpg" style="height: 20px;width: 17px;" title="Exportar para CSV" />
+								                    <p:dataExporter type="csv" target="dataTable-itemPedido" encoding="ISO-8859-1" fileName="itens"/>
+								                </h:commandLink>		 
+							            	</div>
+							      		 </f:facet>									 
+									</p:dataTable>
+								</h:panelGrid>
+							</p:panel>
+								
+										
+							<h:panelGrid id="panelGrid-cadPedido-button" columns="6"
+								cellpadding="5">
+								<p:commandButton id="commandButton-pedidoCadSave"
+									value="Salvar" icon="ui-icon-check"
+									actionListener="#{cadPedidoController.salvarPedido}"
+									update="tbview-cadPedido" />
+	
+								<p:commandButton value="Excluir" id="btnDeletePedido" 
+								   style="height: 23px;"
+								   icon="ui-icon-close"
+								   onclick="if (! confirm('Realmente quer excluir este Pedido?')) return false" 
+								   update="tbview-cadPedido" 
+								   actionListener="#{cadPedidoController.deletarPedido}" 
+								   rendered="#{cadPedidoController.pedidoCadastro.id != 0}"/>
+								
+								<p:commandButton id="commandButton-pedidoCadNovoPedido" 
+									value="Novo Pedido" style="height:23px;" icon="ui-icon-document"
+									actionListener="#{cadPedidoController.novoPedido}"
+									update="form-cadPedido" />
+									
+								<p:commandButton id="btnImprimirPedido" value="Imprimir"
+									style="height: 20px !important;"   update="dialogImpPedido" 
+									title="Imprimir Dados do Pedido" icon="ui-icon-print" oncomplete="PF('dialogImpPedido').show();"
+									process="@this" rendered="#{cadPedidoController.pedidoCadastro.id != 0}"/>
+							</h:panelGrid>
+								
+
+					</h:form>
+					<p:spacer />
+					<p:spacer />
+			</p:tab>
+		</p:tabView>
+		
+
+		<!-- ******************** DIALOG PARA CADASTRO/EDICAO DO ITEM DO PEDIDO  ********************-->
+		<p:dialog header="Item - Pedido" id="dialogCadItem" widgetVar="dialogCadItem" closable="true">
+			<h:form style="margin:autotext-align:center;" id="form-cadItem">
+				
+					<p:panel id="panel-dadosProduto" >	
+						<h:panelGrid id="panelGrid-produto" columns="3" cellpadding="5">
+							<p:outputLabel value="Produto:" for="inputText-pedidoCadProduto"  style="font-weight: bold;" />
+							<p:autoComplete id="inputText-pedidoCadProduto"
+								value="#{cadPedidoController.pedidoProdutoCad.produto}"
+								completeMethod="#{cadPedidoController.findProdutoAutoComplete}" 
+								var="produto" queryDelay="250" minQueryLength="3"
+								itemLabel="#{produto.nome}" itemValue="#{produto}" 
+								converter="produtoConverter" size="88" >	
+									<p:ajax event="itemSelect" listener="#{cadPedidoController.carregaDadosProdutoSelecionado}" update="panelGrid-dadosProduto panelGrid-DataProduto" />
+							</p:autoComplete>
+							<p:commandButton id="btnFindProduto"
+								style="margin-left: -43px;" disabled="true" icon="ui-icon-search">									
+							</p:commandButton>
+						</h:panelGrid>	
+					
+						<h:panelGrid id="panelGrid-dadosProduto" columns="6" cellpadding="5" >
+	
+							 	<p:outputLabel value="Valor Unitário:" for="inputText-produtoCadValor"  style="font-weight: bold;"/>
+						     	<p:outputLabel id="inputText-produtoCadValor"
+									value="R$ #{cadPedidoController.produtoCad.valorUnitario}"  />
+									
+								<p:outputLabel value="Unidade de Medida:" for="inputText-produtoCadInscEst" 
+										style="width:110px;margin-left: 26px;font-weight: bold;"/>
+								<p:outputLabel id="inputText-produtoCadInscEst" 
+									value="#{cadPedidoController.produtoCad.unidadeMedida}"/>
+							
+							 	<p:outputLabel value="Prazo - Dias:" for="inputText-produtoCadPrazo" style="margin-left: 26px;font-weight: bold;"/>
+							     	<p:outputLabel id="inputText-produtoCadPrazo"  style="text-align: center;"
+									value="#{cadPedidoController.produtoCad.prazoDias}"/>
+						</h:panelGrid>
+					</p:panel>
+
+					<h:panelGrid id="panelGrid-DataProduto" columns="4" cellpadding="5">
+						<p:outputLabel value="Entrega:" for="inputText-pedidoCadProdutoDataEntrega" />
+						<p:calendar  id="inputText-pedidoCadProdutoDataEntrega" 
+							size="11" showOn="button" navigator="true" pattern="dd/MM/yyyy" mask="true" locale="pt"
+							value="#{cadPedidoController.pedidoProdutoCad.dataEntrega}" />
+
+						<p:outputLabel value="Retirada Prevista:" for="inputText-pedidoCadProdutoDataRetiradaPrev" />
+						<p:calendar  id="inputText-pedidoCadProdutoDataRetiradaPrev" disabled="true"
+							size="11" showOn="button" navigator="true" pattern="dd/MM/yyyy" mask="true" locale="pt"
+							value="#{cadPedidoController.pedidoProdutoCad.dataPrevistaRetirada}" />
+
+						<p:outputLabel value="Retirada:" for="inputText-pedidoCadProdutoDataRetirada" />
+						<p:calendar  id="inputText-pedidoCadProdutoDataRetirada" 
+							size="11" showOn="button" navigator="true" pattern="dd/MM/yyyy" mask="true" locale="pt"
+							value="#{cadPedidoController.pedidoProdutoCad.dataRetirada}" />
+					</h:panelGrid>	
+				
+				<center>
+				
+				</center>		
+			</h:form>
+		</p:dialog>
+		
+		
+		
+		<!-- ******************** DIALOG IMPRESSAO DADOS PEDIDO  ********************-->
+		<p:dialog header="Imprimir - Dados do Pedido" id="dialogImpPedido" widgetVar="dialogImpPedido" closable="true">
+			
+				<h:panelGrid id="panel-dadosPedidoImp" style="width:800px;border:solid 1px; border-radius:5px;" >
+					
+					<h:panelGrid id="panelGrid-cadPedidoHeader" columns="2" cellpadding="2" style="margin-left:30px;" >
+						<p:graphicImage url="/resources/imagens/logo_entulhos_paranhana.jpg" height="62px;" />
+						<h:panelGrid id="panelGrid-cadPedidoScramHeader" columns="1" cellpadding="2" >
+							<p:outputLabel  value="Entulhos Paranhana - Sistema de Controle de Entradas/Saida"
+								style="color: black;font-size: 16px;"/>
+							<p:outputLabel  value="Dados do Pedido" style="color: black;font-size: 14px;"/>
+						</h:panelGrid>
+					</h:panelGrid>
+					<div style="border:solid 1px; border-radius:20px;"/>
+			
+					<h:panelGrid id="panelGrid-cadPedidoCod" columns="2" cellpadding="2" >
+						<p:outputLabel value="Código:" style="font-weight: bold;" for="outputText-pedidoIdImp" />
+						<p:outputLabel id="outputText-pedidoIdImp" value="#{cadPedidoController.pedidoCadastro.id}" />
+    				 </h:panelGrid>	
+					
+						
+		
+			</h:panelGrid>
+			<center>
+				<h:panelGrid id="pamel-buttomImp" columns="2" 	cellpadding="3">
+					<p:commandButton value="Imprimir" type="button"   icon="ui-icon-print">
+					    <p:printer target="panel-dadosPedidoImp" />
+					</p:commandButton>	
+					<p:commandButton value="Fechar" type="button"   icon="ui-icon-close" onclick="PF('dialogImpPedido').hide();" />					
+				</h:panelGrid>
+			</center>	
+		</p:dialog>
+		
+		
+	</ui:define>
+</ui:composition>
+</html>

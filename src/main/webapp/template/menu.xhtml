@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:form>
+
+	<p:menu style="width: 240px;" toggleable="true" >
+	
+		<p:menuitem value="Home" icon="ui-icon-home" url="home.xhtml"/>
+	
+	    <p:submenu label="Administração" icon="ui-icon-key" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}" >
+				<p:menuitem value="Usuários" icon="ui-icon-person" url="usuarioCad.xhtml" title="Cadastro de Usuários"/>
+				<p:menuitem value="Acessos ao Sistema" icon="ui-icon-document" url="acessoUsuarioView.xhtml" title="Acesso de Usuários"/>
+		</p:submenu>
+		
+		<p:submenu label="Cadastro" icon="ui-icon-document" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_ADMINISTRATIVO' or usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}">
+			<p:menuitem value="Clientes" icon="ui-icon-person" url="clienteCad.xhtml"  title="Cadastro de Clientes" />		
+			<p:menuitem value="Produtos" icon="ui-icon-document" url="produtoCad.xhtml"  title="Cadastro de Produtos" />		
+			<p:menuitem value="Pedidos" icon="ui-icon-document" url="pedidoCad.xhtml"  title="Cadastro de Pedidos" />		
+		</p:submenu>
+		
+		<p:submenu label="Visualizar" icon="ui-icon-circle-zoomin" >
+			<p:menuitem value="Clientes" icon="ui-icon-circle-zoomin" url="clienteView.xhtml"  title="Visualizar Clientes" />			
+			<p:menuitem value="Produtos" icon="ui-icon-circle-zoomin" url="produtoView.xhtml"  title="Visualizar Produtos" />			
+		</p:submenu>	
+			
+		<p:submenu label="Relatórios" icon="ui-icon-clipboard" rendered="#{usuarioController.usuarioLogado.perfil eq 'ROLE_ADMINISTRATIVO' or usuarioController.usuarioLogado.perfil eq 'ROLE_COORDENADOR'}">
+			<p:menuitem value="Clientes" icon="ui-icon-clipboard" url="" title="Relatório de Clientes"/>			
+		</p:submenu>
+	
+		<p:menuitem value="Sair" icon="	ui-icon-power" title="Sair do Sistema" action="#{usuarioController.Logout}" />
+			
+	</p:menu>
+	
+</h:form>
+
+</html>
